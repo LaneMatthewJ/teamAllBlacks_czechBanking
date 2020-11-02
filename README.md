@@ -20,16 +20,7 @@ Banking data and corresponding geographical data can be found in the data direct
 .
 |____data
 | |____geographicalData
-| | |____CZE_adm2-iso19110.xml
-| | |____CZE_adm2-iso19139.xml
-| | |____CZE_adm2.dbf
 | | |____CZE_adm2.shp
-| | |____CZE_adm2.cpg
-| | |____CZE_adm2.shx
-| | |____CZE_adm2-fgdc.xml
-| | |____CZE_adm2.prj
-| | |____CZE_adm2.csv
-| | |____CZE_adm2.shp.xml
 | |____financial_sqlite.sql
 | |____financial.db
 ```
