@@ -8,7 +8,7 @@ This is a repo for Team All Blacks data analysis for the Czech Banking dataset.
 - Mika Marie Donahue
 - Matt Lane
 - Ryan Sitton
-- Benjamin Rives Smith
+- Benjamin Smith
 
 
 
