@@ -42,11 +42,6 @@ def translateDBs(databasePath):
     conn = sqlite3.connect(databasePath)
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    
-    ## Check db if english translted tables exist, if so - then exit
-    
-    
-    
     accountDF = pd.read_sql_query("SELECT * FROM account", conn)
     loanDF = pd.read_sql_query("SELECT * FROM loan", conn)
     orderDF = pd.read_sql_query("SELECT * FROM \"order\"", conn)
