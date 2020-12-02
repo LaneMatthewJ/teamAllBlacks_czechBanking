@@ -97,15 +97,62 @@ def loadAllData(path):
     transDF['k_symbol'] =  transDF['k_symbol'].apply(lambda x: updateOperation(x))
     transDF['status'] = loanDF['status'].apply(lambda x: updateAccountStatus(x))
 
-        # TODO: Don't include loan. or any other with NaN 
-    acct_disposition_client = englishAccountDF.merge(dispositionDF, on='account_id', how='inner').merge(clientDF, on='client_id', how='inner')
-    acct_disp_client_disctrict = acct_disposition_client.merge(distri
-#     acct_disposition_client_loanDF = acct_disposition_client.merge(englishLoanDF, on='account_id', how='left')
-#     acct_disposition_client_loanDF.rename(columns={'district_id_x': 'district_id'}, inplace=True)
-#     acct_disp_client_loan_districtDF = acct_disposition_client_loanDF.merge(districtDF, on='district_id', how='inner')
-#     acct_disposition_client_cardDF = acct_disp_client_loan_districtDF.merge(cardDF, on='disp_id', how='left')
+
+   
+def loadAllData(path): 
+    conn = sqlite3.connect(path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    accountDF = pd.read_sql_query("SELECT * FROM account", conn)
+    cardDF = pd.read_sql_query("SELECT * FROM card", conn)
+    clientDF = pd.read_sql_query("SELECT * FROM client", conn)
+    dispositionDF = pd.read_sql_query("SELECT * FROM disp", conn)
+    districtDF = pd.read_sql_query("SELECT * FROM district", conn)
+    loanDF = pd.read_sql_query("SELECT * FROM loan", conn)
+    orderDF = pd.read_sql_query("SELECT * FROM \"order\"", conn)
+    transDF = pd.read_sql_query("SELECT * FROM trans", conn)
     
+    englishAccountDF = pd.DataFrame.copy(accountDF)
+    englishAccountDF['frequency'] = accountDF['frequency'].apply(lambda x: updateFrequency(x))
+
+    englishOrderDF =  pd.DataFrame.copy(orderDF)
+    englishOrderDF['k_symbol'] = orderDF['k_symbol'].apply(lambda x: updateKSymbol(x))
+
+    englishTransDF = pd.DataFrame.copy(transDF)
+    englishTransDF['type'] =  transDF['type'].apply(lambda x: updateType(x))
+    englishTransDF['operation'] =  transDF['operation'].apply(lambda x: updateOperation(x))
+    englishTransDF['k_symbol'] =  transDF['k_symbol'].apply(lambda x: updateOperation(x))
+
+    englishLoanDF  =  pd.DataFrame.copy(loanDF)
+    englishLoanDF['status'] = loanDF['status'].apply(lambda x: updateAccountStatus(x))
+
+    acct_disposition_client = englishAccountDF.merge(dispositionDF, on='account_id', how='inner').merge(clientDF, on='client_id', how='inner')  
+    acct_disposition_client_loanDF = acct_disposition_client.merge(englishLoanDF, on='account_id', how='left')
+    acct_disposition_client_loanDF.rename(columns={'district_id_x': 'district_id'}, inplace=True)
+    acct_disp_client_loan_districtDF = acct_disposition_client_loanDF.merge(districtDF, on='district_id', how='inner')
+    acct_disposition_client_cardDF = acct_disp_client_loan_districtDF.merge(cardDF, on='disp_id', how='left')
+
+    return acct_disposition_client_cardDF
     
+
+
+
+def extractXYValues(df, yVectorName):
+    notNanDF = df[ df[yVectorName].notna() ]
+    yValues = notNanDF[yVectorName]
+    xValues = notNanDF.loc[:, notNanDF.columns != yVectorName] 
+
+    one_hot_Xdata = pd.get_dummies(xValues)
+
+    return (one_hot_Xdata, yValues)
+
+def getTrainTestSplit(xValues, yValues): 
+    X_train, X_test, y_train, y_test = train_test_split(xValues, yValues, test_size=0.33, random_state=42)
+
+    return (X_train, X_test, y_train, y_test)
+
+
+
 def encodeAccountDF(df):
     monthDict = {'Monthly': 0, 'Weekly': 1, 'AfterTransaction': 2}
     encodedDF = df.copy()
