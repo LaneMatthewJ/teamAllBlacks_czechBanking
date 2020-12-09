@@ -72,31 +72,6 @@ def translateDBs(databasePath):
 
     conn.close()
 
-    
-# def loadAllData(path, encodeData=False): 
-#     conn = sqlite3.connect(databasePath)
-#     cursor = conn.cursor()
-#     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-#     accountDF = pd.read_sql_query("SELECT * FROM account", conn)
-# #     cardDF = pd.read_sql_query("SELECT * FROM card", conn)
-#     clientDF = pd.read_sql_query("SELECT * FROM client", conn)
-#     dispositionDF = pd.read_sql_query("SELECT * FROM disp", conn)
-#     districtDF = pd.read_sql_query("SELECT * FROM district", conn)
-# #     loanDF = pd.read_sql_query("SELECT * FROM loan", conn)
-#     orderDF = pd.read_sql_query("SELECT * FROM \"order\"", conn)
-#     transDF = pd.read_sql_query("SELECT * FROM trans", conn)
-    
-#     transDF['type'] =  transDF['type'].apply(lambda x: updateType(x))
-#     transDF['operation'] =  transDF['operation'].apply(lambda x: updateOperation(x))
-#     transDF['k_symbol'] =  transDF['k_symbol'].apply(lambda x: updateOperation(x))
-#     accountDF['frequency'] = accountDF['frequency'].apply(lambda x: updateFrequency(x))
-#     orderDF['k_symbol'] = orderDF['k_symbol'].apply(lambda x: updateKSymbol(x))
-
-#     transDF['type'] =  transDF['type'].apply(lambda x: updateType(x))
-#     transDF['operation'] =  transDF['operation'].apply(lambda x: updateOperation(x))
-#     transDF['k_symbol'] =  transDF['k_symbol'].apply(lambda x: updateOperation(x))
-#     transDF['status'] = loanDF['status'].apply(lambda x: updateAccountStatus(x))
-
 
    
 def loadAllData(path, encodeData=False): 
