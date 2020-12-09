@@ -37,11 +37,11 @@ def accChangeToDemo(filepath):
 
 
 def categorizeGrowth(growthRate): 
-    if growthRate > 10: 
+    if growthRate > 0.5: 
         return 0
     elif growthRate >= 0: 
         return 1
-    elif growthRate >= -10:
+    elif growthRate >= -0.5:
         return 2
     else: 
         return 3
