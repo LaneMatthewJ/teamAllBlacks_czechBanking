@@ -83,7 +83,7 @@ def updateColumnNames(df):
 
 
    
-def loadAllData(path, encodeData=False): 
+def loadLoanDataWithDistrictDF(path, encodeData=False): 
     conn = sqlite3.connect(path)
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
