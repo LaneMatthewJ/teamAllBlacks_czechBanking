@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 import networkx as nx
 
 def getTrainTestSplit(xValues, yValues): 
-    X_train, X_test, y_train, y_test = train_test_split(xValues, yValues, test_size=0.30)
+    X_train, X_test, y_train, y_test = train_test_split(xValues, yValues, test_size=0.10)
 
     return (X_train, X_test, y_train, y_test)
 

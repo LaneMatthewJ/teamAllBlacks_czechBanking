@@ -329,6 +329,56 @@ def decodeTrans(df):
     return decodedDF
 
 
+def loadLoanDataWithDistrictDF(path, encodeData=False): 
+    conn = sqlite3.connect(path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    accountDF = pd.read_sql_query("SELECT * FROM account", conn)
+    cardDF = pd.read_sql_query("SELECT * FROM card", conn)
+    clientDF = pd.read_sql_query("SELECT * FROM client", conn)
+    dispositionDF = pd.read_sql_query("SELECT * FROM disp", conn)
+    districtDF = pd.read_sql_query("SELECT * FROM district", conn)
+    loanDF = pd.read_sql_query("SELECT * FROM loan", conn)
+    orderDF = pd.read_sql_query("SELECT * FROM \"order\"", conn)
+    transDF = pd.read_sql_query("SELECT * FROM trans", conn)
+    
+    districtDF.at[68,'A12'] = districtDF.at[68,'A13'] 
+    districtDF.at[68,'A15'] = districtDF.at[68,'A16']
+    
+
+    englishAccountDF = pd.DataFrame.copy(accountDF)
+    englishAccountDF['frequency'] = accountDF['frequency'].apply(lambda x: updateFrequency(x))
+
+    englishOrderDF =  pd.DataFrame.copy(orderDF)
+    englishOrderDF['k_symbol'] = orderDF['k_symbol'].apply(lambda x: updateKSymbol(x))
+
+    englishTransDF = pd.DataFrame.copy(transDF)
+    englishTransDF['type'] =  transDF['type'].apply(lambda x: updateType(x))
+    englishTransDF['operation'] =  transDF['operation'].apply(lambda x: updateOperation(x))
+    englishTransDF['k_symbol'] =  transDF['k_symbol'].apply(lambda x:  updateOperation(x))
+
+    englishLoanDF  =  pd.DataFrame.copy(loanDF)
+    englishLoanDF['status'] = loanDF['status'].apply(lambda x: updateAccountStatus(x))
+
+    if encodeData: 
+        englishAccountDF = encodeAccountDF(englishAccountDF)
+        clientDF = encodeClient(clientDF)
+        dispositionDF = encodeDisposition(dispositionDF)
+        districtDF =  encodeDistrict(districtDF)
+        englishLoanDF = encodeLoanData(englishLoanDF)
+        cardDF = encodeCard(cardDF)
+
+
+    acct_disposition_client = englishAccountDF.merge(dispositionDF, on='account_id', how='inner').merge(clientDF, on='client_id', how='inner')  
+    acct_disposition_client_loanDF = acct_disposition_client.merge(englishLoanDF, on='account_id', how='left')
+    acct_disposition_client_loanDF.rename(columns={'district_id_x': 'district_id'}, inplace=True)
+    acct_disp_client_loan_districtDF = acct_disposition_client_loanDF.merge(districtDF, on='district_id', how='inner')
+    acct_disposition_client_cardDF = acct_disp_client_loan_districtDF.merge(cardDF, on='disp_id', how='left')
+
+    return acct_disposition_client_cardDF
+    
+
+
 def usage(): 
     print(""" 
     
